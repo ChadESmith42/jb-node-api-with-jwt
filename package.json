@@ -1,0 +1,33 @@
+{
+  "name": "jb-node-api-with-jwt",
+  "version": "1.0.0",
+  "description": "Node and Express API with JWT authentication and role-based authorization.",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChadESmith42/jb-node-api-with-jwt.git"
+  },
+  "author": {
+    "name": "Chad Smith",
+    "email": "chad@codingbychad.com",
+    "url": "https://codingbychad.com"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChadESmith42/jb-node-api-with-jwt/issues"
+  },
+  "homepage": "https://github.com/ChadESmith42/jb-node-api-with-jwt#readme",
+  "dependencies": {
+    "dotenv": "^15.0.0",
+    "express": "^4.17.2",
+    "express-jwt": "^6.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.7.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
