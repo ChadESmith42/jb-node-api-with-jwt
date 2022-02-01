@@ -1,8 +1,5 @@
 const jwt = require('express-jwt');
 require('dotenv').config();
-
-module.exports = authorize;
-
 const secret = process.env.SECRET;
 
 const authorize = (roles = []) => {
@@ -11,13 +8,14 @@ const authorize = (roles = []) => {
   }
 
   return [
-    jwt({ secret, algorithms: [HS256]}),
+    jwt({ secret, algorithms: ['HS256'] }),
     (req, res, next) => {
       if (roles.length && !roles.includes(req.user.role)) {
-        return res.status(401).json({message: 'Unauthorized'});
+        return res.status(401).json({ message: 'Unauthorized' });
       }
       next();
-    }
-  ]
+    },
+  ];
+};
 
-}
+module.exports = authorize;
