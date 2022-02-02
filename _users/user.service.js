@@ -4,6 +4,11 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const pg = require('../utilities/db.context');
 
+/**
+ * Authenticates users with username and passsword.
+ * @param {object} loginCredentials Username and password as an object.
+ * @returns @param {object} authenticatedUser. Authenticated user model omits user password, but contains all other properties of the user object. Authenticated user also contains the JWT token.
+ */
 const authenticate = async ({ username, password }) => {
   const pword = password;
   try {
@@ -26,6 +31,10 @@ const authenticate = async ({ username, password }) => {
   }
 };
 
+/**
+ * Gets all users from database.
+ * @returns {array} Array of User objects.
+ */
 const getAll = async () => {
   const users = await pg.query(
     `SELECT username, firstName, lastName, email, role FROM users;`,
@@ -34,6 +43,11 @@ const getAll = async () => {
   return users;
 };
 
+/**
+ *
+ * @param {int} userId
+ * @returns
+ */
 const getById = async (userId) => {
   const user = await pg.query(
     `SELECT username, firstName, lastName, email, role FROM users WHERE users.id=$1;`,
@@ -47,8 +61,8 @@ const getById = async (userId) => {
 
 /**
  * Register a new user for the application.
- * @param {*} user
- * @returns
+ * @param {object} user
+ * @returns {Promise<unknown>} User object.
  */
 const register = async (user) => {
   const hashedPassword = bcrypt.hashSync(user.password, 10);
@@ -64,20 +78,41 @@ const register = async (user) => {
   return newUser;
 }
 
-const updatePassword = async (password, userId) => {
-  const hashedPassword = bcrypt.hashSync(password, 10);
+/**
+ *
+ * @param {string} newPassword
+ * @param {int} userId
+ * @returns {object} User. The returned User object does not include the User.Password property.
+ */
+const updatePassword = async (newPassword, userId) => {
+  const hashedPassword = bcrypt.hashSync(newPassword, 10);
   const response = await pg.query(`
       UPDATE users SET password = $1 WHERE id = $2
       RETURN *;
       `, [hashedPassword, userId]);
-  return response.rows[0];
+  const { password, ...updatedUser } = response.rows[0];
+  return updatedUser;
 }
 
+/**
+ * Delete user from database.
+ * @param {int} userId
+ * @returns  {int} Row count of affected records.
+ */
+const deleteUser = async (userId) => {
+  const response = await pg.query(`
+    DELETE FROM users WHERE id = $1;
+  `, [userId]);
+  if (response) {
+    return response.rowCount;
+  }
+}
 
 module.exports = {
   authenticate,
   getAll,
   getById,
   register,
-  updatePassword
+  updatePassword,
+  deleteUser
 };
