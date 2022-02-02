@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/ChadESmith42/jb-node-api-with-jwt#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^15.0.0",
     "express": "^4.17.2",

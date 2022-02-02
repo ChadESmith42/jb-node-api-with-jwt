@@ -4,6 +4,7 @@ const userService = require('../_users/user.service');
 const authorize = require('../utilities/authorize');
 const Role = require('../utilities/role');
 const res = require('express/lib/response');
+const { user } = require('pg/lib/defaults');
 
 const authenticate = async (req, res, next) => {
   try {
@@ -43,8 +44,42 @@ const getById = async (req, res, next) => {
   }
 };
 
+const register = async (req, res) => {
+  try {
+    const user = await userService.register(req.body);
+    if (user) {
+      const username = req.body.username;
+      const password = req.body.password;
+      const auth = await userService.authenticate({username, password});
+       return res.status(200).json(auth);
+      //res.status(201).json(user);
+    } else {
+      throw error;
+    }
+  } catch (error) {
+    return res.status(400).json({ message: 'Could not register you at this time.', error });
+  }
+
+}
+
+const updatePassword = async (req, res) => {
+  try {
+      const authUser = req.user;
+      const password = req.body.password;
+      const updatedUser = userService.updatePassword(password, authUser.id);
+      if (updatedUser) {
+        res.status(200).json({ message: updatedUser });
+      }
+  } catch (error) {
+    console.log(`Could not update user's password.`, error);
+    res.status(500);
+  }
+}
+
 router.post('/authenticate', authenticate);
 router.get('/', authorize(Role.Admin), getAll);
 router.get('/:id', authorize(), getById);
+router.post('/register', register);
+router.post('/update-password', authorize(), updatePassword);
 
 module.exports = router;

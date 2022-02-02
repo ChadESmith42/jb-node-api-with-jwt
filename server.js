@@ -13,8 +13,6 @@ app.use(cors());
 
 app.use('/api/users', userController);
 
-app.use(errorHandler);
-
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
