@@ -62,9 +62,24 @@ const register = async (req, res) => {
 
 }
 
+const updatePassword = async (req, res) => {
+  try {
+      const authUser = req.user;
+      const password = req.body.password;
+      const updatedUser = userService.updatePassword(password, authUser.id);
+      if (updatedUser) {
+        res.status(200).json({ message: updatedUser });
+      }
+  } catch (error) {
+    console.log(`Could not update user's password.`, error);
+    res.status(500);
+  }
+}
+
 router.post('/authenticate', authenticate);
 router.get('/', authorize(Role.Admin), getAll);
 router.get('/:id', authorize(), getById);
 router.post('/register', register);
+router.post('/update-password', authorize(), updatePassword);
 
 module.exports = router;

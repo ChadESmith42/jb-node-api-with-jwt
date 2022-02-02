@@ -64,10 +64,20 @@ const register = async (user) => {
   return newUser;
 }
 
+const updatePassword = async (password, userId) => {
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  const response = await pg.query(`
+      UPDATE users SET password = $1 WHERE id = $2
+      RETURN *;
+      `, [hashedPassword, userId]);
+  return response.rows[0];
+}
+
 
 module.exports = {
   authenticate,
   getAll,
   getById,
-  register
+  register,
+  updatePassword
 };
