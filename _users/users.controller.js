@@ -76,10 +76,47 @@ const updatePassword = async (req, res) => {
   }
 }
 
+const updateUser = async (req, res) => {
+  const authUser = req.user;
+  const user = req.body;
+  const userId = req.params.id;
+  try {
+    if (userId !== authUser.id || userId !== user.id || user.id !== authUser.id) {
+      return res.status(401).json('Unauthorized.');
+    }
+    const responseUser = await userService.updateUser(user, userId);
+    const { password, ...updatedUser } = responseUser;
+    return res.status(200).message(updatedUser);
+  } catch (error) {
+    console.log(`Could not update user.`, error);
+    res.status(500).json({ message: 'Could not update user at this time.' });
+  }
+}
+
+const deleteUser = async (req, res) => {
+  try {
+    const authUser = req.user;
+    const userId = req.params.id;
+    // Check user against auth or Admin role
+    if (authUser.id !== userId && authUser.role != 'Admin') {
+      return res.status(401).json({ message: 'Unauthorized.' });
+    }
+    const response = await userService.deleteUser(userId);
+    if (response) {
+      return res.status(204);
+    }
+  } catch (error) {
+    console.log(`Could not delete user.`, error);
+    return res.status(500).json({ message: 'Could not delete user. Please try again later.' });
+  }
+}
+
 router.post('/authenticate', authenticate);
 router.get('/', authorize(Role.Admin), getAll);
 router.get('/:id', authorize(), getById);
 router.post('/register', register);
-router.post('/update-password', authorize(), updatePassword);
+router.put('/:id/update-password', authorize(), updatePassword);
+router.put('/:id', authorize(), updateUser);
+router.delete('/:id', authorize(), deleteUser);
 
 module.exports = router;
