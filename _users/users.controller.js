@@ -3,8 +3,6 @@ const router = express.Router();
 const userService = require('../_users/user.service');
 const authorize = require('../utilities/authorize');
 const Role = require('../utilities/role');
-const res = require('express/lib/response');
-const { user } = require('pg/lib/defaults');
 
 const authenticate = async (req, res, next) => {
   try {
