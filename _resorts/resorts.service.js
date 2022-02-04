@@ -1,6 +1,5 @@
-const res = require('express/lib/response');
 const pg = require('../utilities.db.context');
-const authService = require('../utilities/authorize');
+
 
 /**
  * Gets list of all resorts.
