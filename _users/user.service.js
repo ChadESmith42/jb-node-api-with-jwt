@@ -21,7 +21,13 @@ const authenticate = async ({ username, password }) => {
       if (!bcrypt.compareSync(pword, u.password)) {
         return null;
       }
-      const token = jwt.sign({ sub: u.id, role: u.role }, secret);
+
+      const payload = {
+        sub: u.id,
+        role: u.role
+      };
+      const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+      //const token = jwt.sign({ sub: u.id, role: u.role }, secret);
       const { password, ...user } = u;
       return { user, token };
     }
@@ -38,10 +44,10 @@ const authenticate = async ({ username, password }) => {
 const getAll = async () => {
   try {
     const users = await pg.query(
-      `SELECT username, firstName, lastName, email, role FROM users;`,
+      `SELECT username, "firstName", "lastName", email, role FROM users;`,
       []
     );
-    return users;
+    return users.rows;
   } catch (error) {
     return null;
   }
@@ -54,7 +60,7 @@ const getAll = async () => {
  */
 const getById = async (userId) => {
   const user = await pg.query(
-    `SELECT username, firstName, lastName, email, role FROM users WHERE users.id=$1;`,
+    `SELECT username, "firstName", "lastName", email, role FROM users WHERE users.id=$1;`,
     [userId]
   );
   if (!user) return;

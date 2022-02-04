@@ -4,7 +4,7 @@ const userService = require('../_users/user.service');
 const authorize = require('../utilities/authorize');
 const Role = require('../utilities/role');
 
-const authenticate = async (req, res, next) => {
+const authenticateUser = async (req, res, next) => {
   try {
     const auth = await userService.authenticate(req.body);
     return res.status(200).json(auth);
@@ -109,12 +109,12 @@ const deleteUser = async (req, res) => {
   }
 }
 
-router.post('/authenticate', authenticate);
-router.get('/', authorize(Role.Admin), getAll);
-router.get('/:id', authorize(), getById);
+router.post('/authenticate', authenticateUser);
+router.get('/', authorize, getAll);
+router.get('/:id', authorize, getById);
 router.post('/register', register);
-router.put('/:id/update-password', authorize(), updatePassword);
-router.put('/:id', authorize(), updateUser);
-router.delete('/:id', authorize(), deleteUser);
+router.put('/:id/password', authorize, updatePassword);
+router.put('/:id', authorize, updateUser);
+router.delete('/:id', authorize, deleteUser);
 
 module.exports = router;

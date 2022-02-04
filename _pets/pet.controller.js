@@ -58,10 +58,10 @@ const deletePet = async (req, res) => {
   res.status(500).json({ message: 'Could not delete pet at this time.' });
 }
 
-router.get('/pets', Authorize(), getPets);
-router.get('/pets/:id', Authorize(), getPetById);
-router.post('/pets', Authorize(), createPet);
-route.put(`/pets/:id`, Authorize(), updatePet);
-route.delete(`/pets/:id`, Authorize(), deletePet);
+router.get('/pets', authorize, getPets);
+router.get('/pets/:id', authorize, getPetById);
+router.post('/pets', authorize, createPet);
+route.put(`/pets/:id`, authorize, updatePet);
+route.delete(`/pets/:id`, authorize, deletePet);
 
 module.exports = router;
