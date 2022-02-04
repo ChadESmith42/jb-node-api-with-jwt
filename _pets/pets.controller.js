@@ -20,7 +20,7 @@ const getPetById = async (req, res, next) => {
   if (pet) {
     res.status(200).json(pet);
   }
-  res.status(400).json({ message: 'Either the pet you requested does not exist or you are not authorized to view this pet.' });
+  res.status(404).json({ message: 'The pet you requested does not exist.' });
 }
 
 const createPet = async (req, res) => {
