@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const userService = require('../_users/user.service');
-const authorize = require('../utilities/authorize');
+const authService = require('../utilities/authorize');
 const Role = require('../utilities/role');
+const role = require('../utilities/role');
 
 const authenticateUser = async (req, res, next) => {
   try {
@@ -18,6 +19,8 @@ const authenticateUser = async (req, res, next) => {
 
 const getAll = async (req, res, next) => {
   try {
+    const authUser = req.user;
+    if (!authService.superUserOnly(authUser)) return res.sendStatus(401);
     const users = await userService.getAll();
     return res.status(200).json(users);
   } catch (error) {
@@ -30,7 +33,7 @@ const getById = async (req, res, next) => {
   const authUser = req.user;
   const id = parseInt(req.params.id);
 
-  if (id != authUser.sub && authUser.Role !== Role.Admin) {
+  if (!authService.userOrAdmin(authUser, id)) {
     return res.sstatus(401).json({ message: 'Unauthorized.' });
   }
   try {
@@ -64,9 +67,9 @@ const updatePassword = async (req, res) => {
   try {
       const authUser = req.user;
       const password = req.body.password;
-      const updatedUser = userService.updatePassword(password, authUser.id);
+      const updatedUser = await userService.updatePassword(password, authUser.id);
       if (updatedUser) {
-        res.status(200).json({ message: updatedUser });
+        res.status(200);
       }
   } catch (error) {
     console.log(`Could not update user's password.`, error);
@@ -78,13 +81,14 @@ const updateUser = async (req, res) => {
   const authUser = req.user;
   const user = req.body;
   const userId = req.params.id;
+  if (userId !== authUser.id || userId !== user.id) return res.sendStatus(403); // Return forbidden if userId's don't match
   try {
-    if (userId !== authUser.id || userId !== user.id || user.id !== authUser.id) {
+    if (authService.userOrAdmin(authUser, userId)) {
       return res.status(401).json('Unauthorized.');
     }
     const responseUser = await userService.updateUser(user, userId);
-    const { password, ...updatedUser } = responseUser;
-    return res.status(200).message(updatedUser);
+    const { password, ...updatedUser } = responseUser.rows[0];
+    return res.send(updatedUser);
   } catch (error) {
     console.log(`Could not update user.`, error);
     res.status(500).json({ message: 'Could not update user at this time.' });
@@ -96,7 +100,7 @@ const deleteUser = async (req, res) => {
     const authUser = req.user;
     const userId = req.params.id;
     // Check user against auth or Admin role
-    if (authUser.id !== userId && authUser.role != 'Admin') {
+    if (!authService.userOrAdmin(authUser, userId)) {
       return res.status(401).json({ message: 'Unauthorized.' });
     }
     const response = await userService.deleteUser(userId);
@@ -110,11 +114,11 @@ const deleteUser = async (req, res) => {
 }
 
 router.post('/authenticate', authenticateUser);
-router.get('/', authorize, getAll);
-router.get('/:id', authorize, getById);
+router.get('/', authService.authorize, getAll);
+router.get('/:id', authService.authorize, getById);
 router.post('/register', register);
-router.put('/:id/password', authorize, updatePassword);
-router.put('/:id', authorize, updateUser);
-router.delete('/:id', authorize, deleteUser);
+router.put('/:id/password', authService.authorize, updatePassword);
+router.put('/:id', authService.authorize, updateUser);
+router.delete('/:id', authService.authorize, deleteUser);
 
 module.exports = router;

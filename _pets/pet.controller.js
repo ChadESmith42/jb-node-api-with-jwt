@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const petService = require('./pet.service');
-const authorize = require('../utilities/authorize');
+const authService = require('../utilities/authorize');
 const Role = require('../utilities/role');
 
 const getPets = async (req, res) => {
@@ -58,10 +58,10 @@ const deletePet = async (req, res) => {
   res.status(500).json({ message: 'Could not delete pet at this time.' });
 }
 
-router.get('/pets', authorize, getPets);
-router.get('/pets/:id', authorize, getPetById);
-router.post('/pets', authorize, createPet);
-route.put(`/pets/:id`, authorize, updatePet);
-route.delete(`/pets/:id`, authorize, deletePet);
+router.get('/pets', authService.authorize, getPets);
+router.get('/pets/:id', authService.authorize, getPetById);
+router.post('/pets', authService.authorize, createPet);
+route.put(`/pets/:id`, authService.authorize, updatePet);
+route.delete(`/pets/:id`, authService.authorize, deletePet);
 
 module.exports = router;

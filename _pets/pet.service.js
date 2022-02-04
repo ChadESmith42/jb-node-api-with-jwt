@@ -1,4 +1,5 @@
 const pg = require('../utilities/db.context');
+const authService = require('../utilities/authorize');
 const role = require('../utilities/role');
 
 /**
@@ -10,7 +11,7 @@ const getPets = async (user) => {
   let queryText = `SELECT * FROM pets ORDER BY name;`;
   const queryParams = [];
   try {
-    if (user.role !== role.Admin || user.role !== user.Employee) {
+    if (!authService.superUserOnly(user)) {
       queryText =  `
         SELECT *
         FROM pets
@@ -20,7 +21,7 @@ const getPets = async (user) => {
       queryParams.push(user.id);
     }
     const pets = await pg.query(queryText, queryParams);
-    return pets;
+    return pets.rows;
   } catch (error) {
     console.log('Could not retrieve all pets.', error);
     return null;
@@ -36,7 +37,7 @@ const getPets = async (user) => {
 const getPetById = async (id, user) => {
   let pet = null;
   try {
-    if (user.role === role.Admin || user.role === role.Employee) {
+    if (authService.superUserOnly(user)) {
       pet = await pg.query(`SELECT * FROM pets WHERE id = $1;`, [id]);
     } else {
       pet = await pg.query(
@@ -49,7 +50,7 @@ const getPetById = async (id, user) => {
         [user.id, id]
       );
     }
-    return pet;
+    return pet.rows[0];
   } catch (error) {
     console.log(`Could not retrieve pet with id ${id}.`, error);
     return null;
@@ -122,7 +123,7 @@ const updatePet = async (pet, user) => {
       pet.secondaryColor,
       pet.id,
     ];
-    if (user.Role === role.User) {
+    if (authService.userOnly(user)) {
       queryText = `
           UPDATE pets
           SET name=$1, breed=$2, birthday=$3, weight=$4, height=$5, "primary_color"=$6, "secondary_color"=$7
@@ -151,7 +152,7 @@ const deletePet = async (petId, user) => {
     let queryText = `DELETE FROM pets WHERE id = $1;`;
     const queryParams = [petId];
 
-    if (user.role === role.User) {
+    if (authService.userOnly(user)) {
       queryText = `
         DELETE FROM pets
         WHERE pets.id IN (SELECT pets_id FROM pets_owners WHERE users_id = $2);

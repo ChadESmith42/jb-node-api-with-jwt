@@ -64,7 +64,7 @@ const getById = async (userId) => {
     [userId]
   );
   if (!user) return;
-  return user;
+  return user.rows[0];
 };
 
 /**
@@ -130,7 +130,7 @@ const updateUser = async (user, userId) => {
       RETURN *; `,
       [user.firstName, user.lastName, user.avatarLink, user.email, userId]
     );
-    return response.rows;
+    return response.rows[0];
   } catch (error) {
     console.log('Could not update user.', error);
     return null;
