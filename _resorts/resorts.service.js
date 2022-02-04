@@ -16,6 +16,11 @@ const getResorts = async () => {
   }
 }
 
+/**
+ * Get a resort by Id.
+ * @param {int} id
+ * @returns {object} Resort object
+ */
 const getResortsById = async id => {
   try {
     const resort = await pg.query(`SELECT * FROM resorts WHERE id = $1`, [id]);
@@ -26,6 +31,11 @@ const getResortsById = async id => {
   }
 }
 
+/**
+ * Create a new resort record.
+ * @param {object} resort
+ * @returns {object} New resort object from db.
+ */
 const createResort = async resort => {
   try {
     const newResort = pg.query(`
@@ -40,6 +50,12 @@ const createResort = async resort => {
   }
 }
 
+/**
+ * Update a resort object.
+ * @param {object} resort
+ * @param {int} resortId
+ * @returns {object} Resort object from db.
+ */
 const updateResort = async (resort, resortId) => {
   try {
     const updatedResort = pg.query(`
@@ -55,6 +71,11 @@ const updateResort = async (resort, resortId) => {
   }
 }
 
+/**
+ * Delete a resort object
+ * @param {int} resortId
+ * @returns {int} Row count of affected records.
+ */
 const deleteResort = async resortId => {
   try {
     const resort = pg.query(`
