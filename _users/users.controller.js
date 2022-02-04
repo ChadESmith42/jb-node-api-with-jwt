@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userService = require('../_users/user.service');
-const authService = require('../utilities/authorize');
-const Role = require('../utilities/role');
-const role = require('../utilities/role');
+const { authService, filterPassword } = require('../utilities');
 
 const authenticateUser = async (req, res, next) => {
   try {
@@ -22,7 +20,7 @@ const getAll = async (req, res, next) => {
     const authUser = req.user;
     if (!authService.superUserOnly(authUser)) return res.sendStatus(401);
     const users = await userService.getAll();
-    return res.status(200).json(users);
+    res.send(filterPassword(users));
   } catch (error) {
     console.log(`Could not get all users.`, error);
     res.status(500);

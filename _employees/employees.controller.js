@@ -2,12 +2,16 @@ const express = require('express');
 const router = express.Router();
 const employeeService = require('./employees.service');
 const authService = require('../utilities/authorize');
+const filterPassword = require('../utilities/filter-password');
 
 const getEmployees = async (req, res) => {
   const authUser = req.user;
   const employees = await employeeService.getEmployees();
   if (employees) {
-    res.send(employees);
+    filteredEmployees = employees.map(e => {
+      return filterPassword(e);
+    })
+    res.send(filteredEmployees);
   }
   res.sendStatus(500);
 }
@@ -16,7 +20,7 @@ const getEmployeeById = async (req, res) => {
   const employeeId = req.params.id;
   const employee = await employeeService.getEmployeeById(employeeId);
   if (employee) {
-    res.send(employee)
+    res.send(filterPassword(employee));
   }
   res.send(404);
 }
@@ -25,7 +29,7 @@ const createEmployee = async (req, res) => {
   const employee = req.body;
   const newEmployee = await employeeService.createEmployee(employee);
   if (newEmployee) {
-    res.send(newEmployee);
+    res.send(filterPassword(newEmployee));
   }
   res.send(500);
 }
@@ -38,7 +42,7 @@ const updateEmployee = async (req, res) => {
   }
   const updatedEmployee = await employeeService.updateEmployee(employee);
   if (updatedEmployee) {
-    res.send(updatedEmployee);
+    res.send(filterPassword(updatedEmployee));
   }
   res.send(500);
 }
