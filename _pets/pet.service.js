@@ -1,6 +1,6 @@
 const pg = require('../utilities/db.context');
 const authService = require('../utilities/authorize');
-const role = require('../utilities/role');
+
 
 /**
  * Gets all pets based on user role. Admins and Employees may see all pets. Users may only see their pets.
@@ -155,7 +155,7 @@ const deletePet = async (petId, user) => {
     if (authService.userOnly(user)) {
       queryText = `
         DELETE FROM pets
-        WHERE pets.id IN (SELECT pets_id FROM pets_owners WHERE users_id = $2);
+        WHERE pets.id IN (SELECT pets_id FROM pets_owners WHERE users_id = $2 AND pets_owners.pets_id = $1);
       `;
       queryParams.push(user.id);
     }
