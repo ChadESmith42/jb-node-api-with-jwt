@@ -89,11 +89,11 @@ CREATE TABLE "reservations" (
 CREATE TABLE "employees" (
 	"id" serial NOT NULL,
 	"users_id" int NOT NULL,
-	"hire_date" date NOT NULL,
+	"hire_date" date NOT NULL DEFAULT 'Now()',
 	"title" varchar(100) NOT NULL,
+	"status" varchar(25) NOT NULL DEFAULT 'active',
 	CONSTRAINT "employees_pk" PRIMARY KEY ("id"),
-	CONSTRAINT "employees_fk0" FOREIGN KEY ("users_id") REFERENCES "users"("id")
-);
+	CONSTRAINT "employees_fk0" FOREIGN KEY ("users_id") REFERENCES "users"("id"));
 
 -- Pet Notes
 CREATE TABLE "notes" (
