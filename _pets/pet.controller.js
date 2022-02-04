@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const petService = require('./pet.service');
 const authService = require('../utilities/authorize');
-const Role = require('../utilities/role');
+
 
 const getPets = async (req, res) => {
   const authUser = req.user;
