@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const role = require('./role');
 require('dotenv').config();
 const secret = process.env.SECRET;
 
@@ -22,4 +23,32 @@ const authorize = (req, res, next) => {
   }
 };
 
-module.exports = authorize;
+/**
+ * Validates user is either an Admin or an Employee.
+ * @param {object} user
+ * @returns {boolean} True if either role exists on the user object.
+ */
+const superUserOnly = user => {
+  return user.Role === role.Admin || user.Role === role.Employee;
+}
+
+/**
+ * Validates user is either an admin or is accessing their own records.
+ * @param {object} user
+ * @param {int} reqId
+ * @returns {boolean} True if user is either an Admin or is accessing their own records.
+ */
+const userOrAdmin = (user, reqId) => {
+  return user.Role === role.Admin || (user.Role === role.User && user.id === reqId);
+}
+
+/**
+ * Validates authenticated user is not an Admin or Employee.
+ * @param {object} user
+ * @returns
+ */
+const userOnly = (user) => {
+  return user.Role === role.User;
+}
+
+module.exports = {authorize, superUserOnly, userOrAdmin, userOnly};
