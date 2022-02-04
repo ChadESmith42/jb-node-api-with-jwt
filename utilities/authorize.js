@@ -45,10 +45,19 @@ const userOrAdmin = (user, reqId) => {
 /**
  * Validates authenticated user is not an Admin or Employee.
  * @param {object} user
- * @returns
+ * @returns {boolean} True if user is Admin or Employee.
  */
-const userOnly = (user) => {
+const userOnly = user => {
   return user.role === role.User;
 }
 
-module.exports = {authorize, superUserOnly, userOrAdmin, userOnly};
+/**
+ * Validates authenticated user is an Admin.
+ * @param {object} user
+ * @returns {boolean} True is user is an Admin.
+ */
+const adminOnly = user => {
+  return user.role === role.Admin;
+}
+
+module.exports = {authorize, superUserOnly, userOrAdmin, userOnly, adminOnly};
