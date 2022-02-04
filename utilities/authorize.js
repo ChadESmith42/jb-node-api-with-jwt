@@ -29,7 +29,7 @@ const authorize = (req, res, next) => {
  * @returns {boolean} True if either role exists on the user object.
  */
 const superUserOnly = user => {
-  return user.Role === role.Admin || user.Role === role.Employee;
+  return user.role == role.Admin || user.role == role.Employee;
 }
 
 /**
@@ -39,7 +39,7 @@ const superUserOnly = user => {
  * @returns {boolean} True if user is either an Admin or is accessing their own records.
  */
 const userOrAdmin = (user, reqId) => {
-  return user.Role === role.Admin || (user.Role === role.User && user.id === reqId);
+  return user.role === role.Admin || (user.role === role.User && user.id === reqId);
 }
 
 /**
@@ -48,7 +48,7 @@ const userOrAdmin = (user, reqId) => {
  * @returns
  */
 const userOnly = (user) => {
-  return user.Role === role.User;
+  return user.role === role.User;
 }
 
 module.exports = {authorize, superUserOnly, userOrAdmin, userOnly};
