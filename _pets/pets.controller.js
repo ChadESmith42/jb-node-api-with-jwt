@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const petService = require('./pet.service');
+const petService = require('./pets.service');
 const { authService } = require('../utilities');
 
 
