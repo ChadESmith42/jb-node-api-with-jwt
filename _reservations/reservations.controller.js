@@ -64,9 +64,22 @@ const deleteReservation = async (req, res) => {
   }
 }
 
+const getAvailability = async (req, res) => {
+  try {
+    const reservation = req.body;
+    const isAvailable = await reservationService.checkCapacity(reservation);
+    res.send(isAvailable);
+  } catch (error) {
+    console.error('Could not get availability.', error);
+    res.send(500);
+  }
+
+}
+
 router.get('/reservations', authService.superUserOnly, getReservations);
 router.get('/reservations/user', authService.authorize, getUserReservations);
 router.get('/reservations/:id', authService.superUserOnly, getResortReservations);
 router.post('/reservations', authService.authorize, createReservation);
+router.delete('/reservation/:id', authService.userOrAdmin, deleteReservation);
 
 module.exports = router;
