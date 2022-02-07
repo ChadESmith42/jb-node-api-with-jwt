@@ -4,7 +4,8 @@
   "description": "Node and Express API with JWT authentication and role-based authorization.",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "server.js",
+    "dev-start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
