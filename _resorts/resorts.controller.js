@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const resortService = require('./resorts.service');
-const authService = require('../utilities/authorize');
+const { authService } = require('../utilities');
 
 const getResorts = async (req, res) => {
   try {

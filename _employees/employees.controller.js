@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const employeeService = require('./employees.service');
-const authService = require('../utilities/authorize');
-const filterPassword = require('../utilities/filter-password');
+const { authService, filterPassword } = require('../utilities');
+
 
 const getEmployees = async (req, res) => {
   const authUser = req.user;

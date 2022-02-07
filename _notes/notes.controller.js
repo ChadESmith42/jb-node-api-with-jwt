@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const notesService = require('./notes.service');
-const { authorize } = require('../utilities');
+const { authService } = require('../utilities');
 
 const getNotes = async (req, res) => {
   try {
@@ -99,13 +99,13 @@ const deleteNote = async (req, res) => {
   }
 }
 
-router.get('/notes', authorize.superUserOnly, getNotes);
-router.get('/notes/:id', authorize.authorize, getNoteById);
-router.get('/notes/byPet/:id', authorize.authorize, getNotesByPetId);
-router.get(`/notes/byOwner/:id`, authorize.authorize, getNotesByOwnerId);
-router.get('/notes/byEmployee/:id', authorize.superUserOnly, getNotesByEmployeeId);
-router.post('/notes', authorize.superUserOnly, createNote);
-router.put('/notes/:id', authorize.superUserOnly, updateNote);
-router.delete('/notes/:id', authorize.superUserOnly, deleteNote);
+router.get('/notes', authService.superUserOnly, getNotes);
+router.get('/notes/:id', authService.authorize, getNoteById);
+router.get('/notes/byPet/:id', authService.authorize, getNotesByPetId);
+router.get(`/notes/byOwner/:id`, authService.authorize, getNotesByOwnerId);
+router.get('/notes/byEmployee/:id', authService.superUserOnly, getNotesByEmployeeId);
+router.post('/notes', authService.superUserOnly, createNote);
+router.put('/notes/:id', authService.superUserOnly, updateNote);
+router.delete('/notes/:id', authService.superUserOnly, deleteNote);
 
 module.exports = router;
