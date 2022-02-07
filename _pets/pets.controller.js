@@ -61,7 +61,7 @@ const deletePet = async (req, res) => {
 router.get('/pets', authService.authorize, getPets);
 router.get('/pets/:id', authService.authorize, getPetById);
 router.post('/pets', authService.authorize, createPet);
-route.put(`/pets/:id`, authService.authorize, updatePet);
-route.delete(`/pets/:id`, authService.authorize, deletePet);
+router.put(`/pets/:id`, authService.authorize, updatePet);
+router.delete(`/pets/:id`, authService.authorize, deletePet);
 
 module.exports = router;

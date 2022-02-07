@@ -70,7 +70,7 @@ const deleteResort = async (req, res) => {
 router.get('/resorts', getResorts);
 router.get('/resorts/:id', getResortById);
 router.post('/resorts', authService.authorize, createResort);
-router.pus('/resorts/:id', authService.authorize, updateResort);
+router.put('/resorts/:id', authService.authorize, updateResort);
 router.delete('/resorts/:id', authService.authorize, deleteResort);
 
 module.exports = router;
