@@ -60,11 +60,13 @@ CREATE TABLE "resorts" (
 -- Resorts Hours
 CREATE TABLE "resorts_hours" (
 	"id" serial NOT NULL,
+	"resorts_id"
 	"day" varchar(10) NOT NULL,
 	"startTime" time NOT NULL,
 	"stopTime" time NOT NULL,
 	"capacity" integer NOT NULL DEFAULT 25,
-	CONSTRAINT "resorts_hours_pk" PRIMARY KEY ("id")
+	CONSTRAINT "resorts_hours_pk" PRIMARY KEY ("id"),
+	CONSTRAINT "resorts_hours_fk" FOREIGN KEY ("resorts_id") REFERENCES "resorts"("id")
 ) WITH (
   OIDS=FALSE
 );
