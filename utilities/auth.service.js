@@ -60,4 +60,4 @@ const adminOnly = user => {
   return user.role === role.Admin;
 }
 
-module.exports = {authorize, superUserOnly, userOrAdmin, userOnly, adminOnly};
+module.exports = { authorize, superUserOnly, userOrAdmin, userOnly, adminOnly };

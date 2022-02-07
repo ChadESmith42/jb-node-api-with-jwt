@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userService = require('../_users/user.service');
-const { authService, filterPassword } = require('../utilities');
+const { authService , filterPassword } = require('../utilities');
 
 const authenticateUser = async (req, res, next) => {
   try {
@@ -112,7 +112,7 @@ const deleteUser = async (req, res) => {
 }
 
 router.post('/authenticate', authenticateUser);
-router.get('/', authService.authorize, getAll);
+router.get('/', authService.authorize , getAll);
 router.get('/:id', authService.authorize, getById);
 router.post('/register', register);
 router.put('/:id/password', authService.authorize, updatePassword);
