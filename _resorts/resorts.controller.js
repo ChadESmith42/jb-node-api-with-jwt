@@ -32,7 +32,7 @@ const createResort = async (req, res) => {
     }
     res.sendStatus(403);
   } catch (error) {
-    console.log('Could not create new resort', error);
+    console.error('Could not create new resort', error);
     res.sendStatus(500);
   }
 }
@@ -48,7 +48,7 @@ const updateResort = async (req, res) => {
     }
     res.sendStatus(403);
   } catch (error) {
-    console.log(`Could not update resort with id ${resortId}.`, error);
+    console.error(`Could not update resort with id ${resortId}.`, error);
   }
 }
 
@@ -62,7 +62,7 @@ const deleteResort = async (req, res) => {
     }
     res.sendStatus(403);
   } catch (error) {
-    console.log(`Could not delete resort with id ${resortId}`, error);
+    console.error(`Could not delete resort with id ${resortId}`, error);
     res.sendStatus(500);
   }
 }

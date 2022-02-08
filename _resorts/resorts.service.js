@@ -10,7 +10,7 @@ const getResorts = async () => {
     const resorts = await pg.query(`SELECT * FROM resorts;`);
     return resorts.rows;
   } catch (error) {
-    console.log('Could not retrieve resorts.', error);
+    console.error('Could not retrieve resorts.', error);
     return null;
   }
 }
@@ -25,7 +25,7 @@ const getResortsById = async id => {
     const resort = await pg.query(`SELECT * FROM resorts WHERE id = $1`, [id]);
     return resort.rows[0];
   } catch (error) {
-    console.log(`Could not retrieve resort with id of ${id}.`, error);
+    console.error(`Could not retrieve resort with id of ${id}.`, error);
     return null;
   }
 }
@@ -44,7 +44,7 @@ const createResort = async resort => {
     `, [resort.name, resort.address, resort.city, resort.state, resort.zipCode, resort.latitude, resort.longitude]);
     return newResort.rows[0]
   } catch (error) {
-    console.log('Could not create new resort.', error);
+    console.error('Could not create new resort.', error);
     return null;
   }
 }
@@ -65,7 +65,7 @@ const updateResort = async (resort, resortId) => {
     `, [resort.name, resort.address, resort.city, resort.state, resort.zipCode, resort.latitude, resort.longitude, resortId]);
     return updatedResort.rows[0];
   } catch (error) {
-    console.log(`Could not update resort with id ${resortId}.`, error);
+    console.error(`Could not update resort with id ${resortId}.`, error);
     return null;
   }
 }
@@ -82,7 +82,7 @@ const deleteResort = async resortId => {
     `, );
     return resort.rowCount;
   } catch (error) {
-    console.log(`Could not delete resort with id ${resortId}.`, error);
+    console.error(`Could not delete resort with id ${resortId}.`, error);
     return null;
   }
 }
