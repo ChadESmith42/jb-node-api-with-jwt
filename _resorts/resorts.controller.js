@@ -67,10 +67,10 @@ const deleteResort = async (req, res) => {
   }
 }
 
-router.get('/resorts', getResorts);
-router.get('/resorts/:id', getResortById);
-router.post('/resorts', authService.authorize, createResort);
-router.put('/resorts/:id', authService.authorize, updateResort);
-router.delete('/resorts/:id', authService.authorize, deleteResort);
+router.get('/', getResorts);
+router.get('/:id', getResortById);
+router.post('/', authService.authorize, createResort);
+router.put('/:id', authService.authorize, updateResort);
+router.delete('/:id', authService.authorize, deleteResort);
 
 module.exports = router;
