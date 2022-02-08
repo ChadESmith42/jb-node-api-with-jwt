@@ -12,7 +12,9 @@ let config = {
     idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed
 };
 
-const pool = new pg.Pool(config);
+const connectionString = process.env.DBCONNECTION;
+
+const pool = new pg.Pool({connectionString, ssl: { rejectUnauthorized: false } });
 
 // Prod connection:
 // const pool = new pg.Pool({
