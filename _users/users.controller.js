@@ -99,11 +99,12 @@ const deleteUser = async (req, res) => {
     const userId = req.params.id;
     // Check user against auth or Admin role
     if (!authService.userOrAdmin(authUser, userId)) {
-      return res.status(401).json({ message: 'Unauthorized.' });
+      return res.sendStatus(401);
     }
     const response = await userService.deleteUser(userId);
+
     if (response) {
-      return res.status(204);
+      return res.sendStatus(204);
     }
   } catch (error) {
     console.error(`Could not delete user.`, error);
