@@ -26,7 +26,7 @@ const pool = new pg.Pool(config);
  * Emits an error on behalf of idle clients due to backend errors
  */
 pool.on('error', (err) => {
-  console.log('Unexpected error on idle client', err);
+  console.error('Unexpected error on idle client', err);
   process.exit(-1);
 });
 
@@ -41,7 +41,7 @@ const query = async (text, values) => {
     const res = await pool.query(text, values);
     return res;
   } catch (error) {
-    console.log('Error in query', error);
+    console.error('Error in query', error);
     return error;
   }
 };
