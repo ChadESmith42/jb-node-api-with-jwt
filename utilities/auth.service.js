@@ -39,7 +39,7 @@ const superUserOnly = user => {
  * @returns {boolean} True if user is either an Admin or is accessing their own records.
  */
 const userOrAdmin = (user, reqId) => {
-  return user.role === role.Admin || (user.role === role.User && user.id === reqId);
+  return user.role === role.Admin ||  user.sub === reqId;
 }
 
 /**

@@ -13,7 +13,7 @@ const authenticate = async ({ username, password }) => {
   const pword = password;
   try {
     const results = await pg.query(
-      `SELECT username, password, "firstName", "lastName", email, role FROM users WHERE users.username=$1;`,
+      `SELECT id, username, password, "firstName", "lastName", email, role FROM users WHERE users.username=$1;`,
       [username]
     );
     const u = results.rows[0];
@@ -24,15 +24,15 @@ const authenticate = async ({ username, password }) => {
 
       const payload = {
         sub: u.id,
-        role: u.role
+        role: u.role,
       };
-      const token = jwt.sign(payload, secret, { expiresIn: '1h' });
-      //const token = jwt.sign({ sub: u.id, role: u.role }, secret);
-      const { password, ...user } = u;
+      //const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+      const token = jwt.sign({ sub: u.id, role: u.role }, secret);
+      const { password, id, ...user } = u;
       return { user, token };
     }
   } catch (error) {
-    console.log(`Error authenticating user.`, error);
+    console.error(`Error authenticating user.`, error);
     return null;
   }
 };
@@ -132,7 +132,7 @@ const updateUser = async (user, userId) => {
     );
     return response.rows[0];
   } catch (error) {
-    console.log('Could not update user.', error);
+    console.error('Could not update user.', error);
     return null;
   }
 };

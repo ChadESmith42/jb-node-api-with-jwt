@@ -23,7 +23,7 @@ const getPets = async (user) => {
     const pets = await pg.query(queryText, queryParams);
     return pets.rows;
   } catch (error) {
-    console.log('Could not retrieve all pets.', error);
+    console.error('Could not retrieve all pets.', error);
     return null;
   }
 };
@@ -52,7 +52,7 @@ const getPetById = async (id, user) => {
     }
     return pet.rows[0];
   } catch (error) {
-    console.log(`Could not retrieve pet with id ${id}.`, error);
+    console.error(`Could not retrieve pet with id ${id}.`, error);
     return null;
   }
 };
@@ -94,7 +94,7 @@ const createPet = async (pet, userId) => {
     await pg.query('COMMIT;');
     return createdPet;
   } catch (error) {
-    console.log('Could not create new pet', error);
+    console.error('Could not create new pet', error);
     await pg.query(`ROLLBACK`);
     return null;
   }
@@ -136,7 +136,7 @@ const updatePet = async (pet, user) => {
       return updatedPet.rows[0];
     }
   } catch (error) {
-    console.log('Could not update pet.', error);
+    console.error('Could not update pet.', error);
     return null;
   }
 };
@@ -165,7 +165,7 @@ const deletePet = async (petId, user) => {
       return response.rowCount;
     }
   } catch (error) {
-    console.log('Could not delete pet.', error);
+    console.error('Could not delete pet.', error);
     return null;
   }
 };

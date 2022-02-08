@@ -58,7 +58,7 @@ const getNotesByEmployeeId = async (req, res) => {
     if (notes) res.send(notes);
     res.sendStatus(404);
   } catch (error) {
-    console.log(`Could not get notes for employee ${employeeId}.`, error);
+    console.error(`Could not get notes for employee ${employeeId}.`, error);
     res.sendStatus(500);
   }
 }
@@ -70,7 +70,7 @@ const createNote = async (req, res) => {
     if (note) res.send(note);
     res.sendStatus(400);
   } catch (error) {
-    console.log('Could not create new note.', error);
+    console.error('Could not create new note.', error);
     res.sendStatus(500);
   }
 }
@@ -83,7 +83,7 @@ const updateNote = async (req, res) => {
     if (note) res.send(note);
     res.sendStatus(400);
   } catch (error) {
-    console.log('Could not update note.', error);
+    console.error('Could not update note.', error);
     res.sendStatus(500);
   }
 }

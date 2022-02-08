@@ -8,7 +8,7 @@ const getReservations = async (req, res) => {
     const reservations = await reservationService.getReservations();
     if (reservations) res.send(reservations);
   } catch (error) {
-    console.log('Could not get reservations.', error);
+    console.error('Could not get reservations.', error);
     res.sendStatus(500);
   }
 }
@@ -59,7 +59,7 @@ const deleteReservation = async (req, res) => {
     const result = await reservationService.deleteReservation(reservationId);
     if (result) res.sendStatus()
   } catch (error) {
-    console.log(`Could not delete reservation ${reservationId}.`, error);
+    console.error(`Could not delete reservation ${reservationId}.`, error);
     res.sendStatus(500);
   }
 }
