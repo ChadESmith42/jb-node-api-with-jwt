@@ -8,7 +8,7 @@ const authenticateUser = async (req, res, next) => {
     const auth = await userService.authenticate(req.body);
     return res.status(200).json(auth);
   } catch (error) {
-    console.log('Could not authenticate user from req.', req, error);
+    console.error('Could not authenticate user from req.', req, error);
     return res
       .status(401)
       .json({ message: 'Username or password are incorrect.' });
@@ -22,7 +22,7 @@ const getAll = async (req, res, next) => {
     const users = await userService.getAll();
     res.send(filterPassword(users));
   } catch (error) {
-    console.log(`Could not get all users.`, error);
+    console.error(`Could not get all users.`, error);
     res.status(500);
   }
 };
@@ -32,13 +32,13 @@ const getById = async (req, res, next) => {
   const id = parseInt(req.params.id);
 
   if (!authService.userOrAdmin(authUser, id)) {
-    return res.sstatus(401).json({ message: 'Unauthorized.' });
+    return res.status(401).json({ message: 'Unauthorized.' });
   }
   try {
-    const user = await userService.getById(req.params.id);
+    const user = await userService.getById(id);
     res.status(200).json(user);
   } catch (error) {
-    console.log(`Could not retrieve user by id`, error, user, id);
+    console.error(`Could not retrieve user by id`, error, user, id);
     res.status(500).json({ message: 'Could not retrieve user by id.', error });
   }
 };
@@ -70,7 +70,7 @@ const updatePassword = async (req, res) => {
         res.status(200);
       }
   } catch (error) {
-    console.log(`Could not update user's password.`, error);
+    console.error(`Could not update user's password.`, error);
     res.status(500);
   }
 }
@@ -88,7 +88,7 @@ const updateUser = async (req, res) => {
     const { password, ...updatedUser } = responseUser.rows[0];
     return res.send(updatedUser);
   } catch (error) {
-    console.log(`Could not update user.`, error);
+    console.error(`Could not update user.`, error);
     res.status(500).json({ message: 'Could not update user at this time.' });
   }
 }
@@ -106,7 +106,7 @@ const deleteUser = async (req, res) => {
       return res.status(204);
     }
   } catch (error) {
-    console.log(`Could not delete user.`, error);
+    console.error(`Could not delete user.`, error);
     return res.status(500).json({ message: 'Could not delete user. Please try again later.' });
   }
 }
