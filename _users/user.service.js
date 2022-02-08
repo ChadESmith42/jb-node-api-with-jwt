@@ -44,7 +44,7 @@ const authenticate = async ({ username, password }) => {
 const getAll = async () => {
   try {
     const users = await pg.query(
-      `SELECT username, "firstName", "lastName", email, role FROM users;`,
+      `SELECT id, username, "firstName", "lastName", email, role FROM users;`,
       []
     );
     return users.rows;
