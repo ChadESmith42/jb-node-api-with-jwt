@@ -6,11 +6,13 @@ const { authService } = require('../utilities');
 
 const getPets = async (req, res) => {
   const authUser = req.user;
-  const pets = await petService.getPets(authUser);
-  if (pets) {
-    res.status(200).json(pets);
+  try {
+    const pets = await petService.getPets(authUser);
+    res.send(pets);
+  } catch (error) {
+    console.error(`Could not get list of all pets for ${user}.`, error);
+    res.sendStatus(500).json({ message: 'Cannot get list of pets at this time.'}) ;
   }
-  res.status(401).json({ message: 'Unauthorized' });
 }
 
 const getPetById = async (req, res, next) => {
@@ -25,26 +27,32 @@ const getPetById = async (req, res, next) => {
 
 const createPet = async (req, res) => {
   const newPet = req.body;
-  const userId = req.user.id;
-  const pet = await petService.createPet(newPet, userId);
-  if (pet) {
-    res.status(204).json(pet);
+  const userId = req.user.sub;
+  try {
+    const pet = await petService.createPet(newPet, userId);
+    res.send(pet);
+  } catch (error) {
+    console.error(`Could not create ${pet} for ${user}.`, error);
+    res.sendStatus(500).json({ message: 'Could not create a new pet at this time.'});
   }
-  res.status(500).json({ message: 'Could not create a pet at this time.' });
 }
 
 const updatePet = async (req, res) => {
   const user = req.user;
   const pet = req.body;
   const petId = req.params.id;
-  if (pet.id != petId) {
-    res.status(403).json({ message: 'Forbidden' });
+  try {
+   if (pet.id !== Number(petId) || pet.ownerId !== user.sub) {
+     console.log(`Pet id in param ${petId} and pet.id in body ${pet.id}`);
+     console.log(`authUser ${user.sub} ownerId ${pet.ownerId}`);
+     res.sendStatus(403);
+   }
+   const updatedPet = await petService.updatePet(pet);
+   res.send(updatedPet);
+  } catch (error) {
+    console.error('Error updating pet', { pet }, error);
+    res.sendStatus(500);
   }
-  const updatedPet = await petService.updatePet(pet, user);
-  if (updatedPet) {
-    res.status(200).json(updatedPet);
-  }
-  res.status(500).json({ message: 'Could not update pet at this time.' });
 }
 
 const deletePet = async (req, res) => {
@@ -58,10 +66,10 @@ const deletePet = async (req, res) => {
   res.status(500).json({ message: 'Could not delete pet at this time.' });
 }
 
-router.get('/pets', authService.authorize, getPets);
-router.get('/pets/:id', authService.authorize, getPetById);
-router.post('/pets', authService.authorize, createPet);
-router.put(`/pets/:id`, authService.authorize, updatePet);
-router.delete(`/pets/:id`, authService.authorize, deletePet);
+router.get('/', authService.authorize, getPets);
+router.get('/:id', authService.authorize, getPetById);
+router.post('/', authService.authorize, createPet);
+router.put(`/:id`, authService.authorize, updatePet);
+router.delete(`/:id`, authService.authorize, deletePet);
 
 module.exports = router;

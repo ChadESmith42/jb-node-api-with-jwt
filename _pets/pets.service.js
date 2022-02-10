@@ -12,13 +12,14 @@ const getPets = async (user) => {
   const queryParams = [];
   try {
     if (!authService.superUserOnly(user)) {
-      queryText =  `
-        SELECT *
+      queryText = `
+        SELECT pets.id, name, breed, birthday, weight, height, primary_color as "primaryColor", secondary_color as "secondaryColor",
+                        date_registered as "dateRegistered", pets_owners.users_id as "ownerId"
         FROM pets
-        JOIN pets_owners ON pets.id = pets_owners."pet_id"
-        WHERE pets_owners."user_id" = $1
+        JOIN pets_owners ON pets.id = pets_owners.pets_id
+        WHERE pets_owners.users_id = $1;
       `;
-      queryParams.push(user.id);
+      queryParams.push(user.sub);
     }
     const pets = await pg.query(queryText, queryParams);
     return pets.rows;
@@ -65,7 +66,7 @@ const getPetById = async (id, user) => {
  */
 const createPet = async (pet, userId) => {
   try {
-    await pg.query('BEGIN'); // Using a Postgresql TRANSACTION for this process
+    await pg.query(`BEGIN`);
     const response = await pg.query(
       `
       INSERT INTO pets (name, breed, birthday, weight, height, "primary_color", "secondary_color")
@@ -82,23 +83,23 @@ const createPet = async (pet, userId) => {
         pet.secondaryColor,
       ]
     );
-    const createdPet = response.rows[0];
-    await pg.query(
-      `
-      INSERT INTO pets_owners (pet_id, owner_id)
-      VALUES ($1, $2)
-      RETURNING *;
-    `,
-      [createdPet.id, userId]
-    );
-    await pg.query('COMMIT;');
-    return createdPet;
+      const newPet = response.rows[0];
+      const petOwner = await pg.query(
+        `INSERT INTO pets_owners (pets_id, users_id)
+        VALUES ($1, $2)
+        RETURNING *;
+        `,
+        [newPet.id, userId]
+      );
+      await pg.query('COMMIT');
+      return { ...newPet, ownerId: petOwner.rows[0].owners_id };
   } catch (error) {
-    console.error('Could not create new pet', error);
-    await pg.query(`ROLLBACK`);
+    console.error(`Could not create pet in PetService.`, error);
+    await pg.query('ROLLBACK');
     return null;
   }
-};
+}
+
 
 /**
  * Update a Pet object dependent upon User.role. Admins and Employees may update any pet. Users may only update their own pets.
@@ -123,14 +124,6 @@ const updatePet = async (pet, user) => {
       pet.secondaryColor,
       pet.id,
     ];
-    if (authService.userOnly(user)) {
-      queryText = `
-          UPDATE pets
-          SET name=$1, breed=$2, birthday=$3, weight=$4, height=$5, "primary_color"=$6, "secondary_color"=$7
-          WHERE pets.id IN (SELECT pets_id FROM pets_owners WHERE pets_id = $8 AND users_id = $9);
-          RETURNING *;`;
-      queryParams.push(user.id);
-    }
     const updatedPet = await pg.query(queryText, queryParams);
     if (updatedPet) {
       return updatedPet.rows[0];

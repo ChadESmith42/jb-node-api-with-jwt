@@ -16,7 +16,6 @@ const authorize = (req, res, next) => {
 
       req.user = user;
       next();
-      console.groupEnd();
     });
   } else {
     res.sendStatus(401);
