@@ -142,24 +142,14 @@ const updatePet = async (pet, user) => {
  */
 const deletePet = async (petId, user) => {
   try {
-    let queryText = `DELETE FROM pets WHERE id = $1;`;
-    const queryParams = [petId];
-
-    if (authService.userOnly(user)) {
-      queryText = `
-        DELETE FROM pets
-        WHERE pets.id IN (SELECT pets_id FROM pets_owners WHERE users_id = $2 AND pets_owners.pets_id = $1);
-      `;
-      queryParams.push(user.id);
-    }
-
-    const response = await pg.query(queryText, queryParams);
-    if (response) {
-      return response.rowCount;
-    }
+    const response = await pg.query(`
+      DELETE FROM pets
+      WHERE id = $1;
+    `, [ petId ]);
+    return response.rowCount === 1;
   } catch (error) {
     console.error('Could not delete pet.', error);
-    return null;
+    return false;
   }
 };
 

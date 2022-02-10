@@ -58,12 +58,17 @@ const updatePet = async (req, res) => {
 const deletePet = async (req, res) => {
   const petId = req.params.id;
   const user = req.user;
-
+  try {
   const response = await petService.deletePet(petId, user);
   if (response) {
-    res.status(200);
+    res.sendStatus(204);
   }
-  res.status(500).json({ message: 'Could not delete pet at this time.' });
+  } catch (error) {
+    console.error('Could not delete pet', error);
+    res.status(500).json({ message: 'Could not delete pet at this time.' });
+  }
+
+
 }
 
 router.get('/', authService.authorize, getPets);
