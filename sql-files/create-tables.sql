@@ -36,8 +36,10 @@ CREATE TABLE "pets_owners" (
 	"users_id" int NOT NULL,
 	"pets_id" int NOT NULL,
 	CONSTRAINT "pets_owners_pk" PRIMARY KEY ("id"),
-	CONSTRAINT "pets_owners_fk0" FOREIGN KEY ("users_id") REFERENCES "users"("id"),
-	CONSTRAINT "pets_owners_fk1" FOREIGN KEY ("pets_id") REFERENCES "pets"("id")
+	CONSTRAINT "pets_owners_fk0" FOREIGN KEY ("users_id") REFERENCES "users"("id") ON
+DELETE CASCADE,
+	CONSTRAINT "pets_owners_fk1" FOREIGN KEY ("pets_id") REFERENCES "pets"("id") ON
+DELETE CASCADE
 ) WITH (
   OIDS=FALSE
 );
@@ -60,13 +62,13 @@ CREATE TABLE "resorts" (
 -- Resorts Hours
 CREATE TABLE "resorts_hours" (
 	"id" serial NOT NULL,
-	"resorts_id"
+	"resorts_id" int NOT NULL,
 	"day" varchar(10) NOT NULL,
 	"startTime" time NOT NULL,
 	"stopTime" time NOT NULL,
 	"capacity" integer NOT NULL DEFAULT 25,
 	CONSTRAINT "resorts_hours_pk" PRIMARY KEY ("id"),
-	CONSTRAINT "resorts_hours_fk" FOREIGN KEY ("resorts_id") REFERENCES "resorts"("id")
+	CONSTRAINT "resorts_hours_fk" FOREIGN KEY ("resorts_id") REFERENCES "resorts"("id") ON DELETE CASCADE
 ) WITH (
   OIDS=FALSE
 );
@@ -80,9 +82,12 @@ CREATE TABLE "reservations" (
 	"resorts_id" int NOT NULL,
 	"date" date NOT NULL,
 	CONSTRAINT "reservations_pk" PRIMARY KEY ("id"),
-	CONSTRAINT "reservations_fk0" FOREIGN KEY ("owners_id") REFERENCES "users"("id"),
-	CONSTRAINT "reservations_fk1" FOREIGN KEY ("pets_id") REFERENCES "pets"("id"),
-	CONSTRAINT "reservations_fk2" FOREIGN KEY ("resorts_id") REFERENCES "resorts"("id")
+	CONSTRAINT "reservations_fk0" FOREIGN KEY ("owners_id") REFERENCES "users"("id") ON
+DELETE CASCADE,
+	CONSTRAINT "reservations_fk1" FOREIGN KEY ("pets_id") REFERENCES "pets"("id") ON
+DELETE CASCADE,
+	CONSTRAINT "reservations_fk2" FOREIGN KEY ("resorts_id") REFERENCES "resorts"("id") ON
+DELETE CASCADE
 ) WITH (
   OIDS=FALSE
 );
@@ -94,8 +99,9 @@ CREATE TABLE "employees" (
 	"hire_date" date NOT NULL DEFAULT 'Now()',
 	"title" varchar(100) NOT NULL,
 	"status" varchar(25) NOT NULL DEFAULT 'active',
-	CONSTRAINT "employees_pk" PRIMARY KEY ("id"),
-	CONSTRAINT "employees_fk0" FOREIGN KEY ("users_id") REFERENCES "users"("id"));
+	CONSTRAINT "employees_pk" PRIMARY KEY ("id"), CONSTRAINT "employees_fk0"
+	FOREIGN KEY ("users_id") REFERENCES "users"("id") ON DELETE CASCADE
+	);
 
 -- Pet Notes
 CREATE TABLE "notes" (
@@ -105,8 +111,10 @@ CREATE TABLE "notes" (
 	"note" text,
 	"date" date NOT NULL,
 	CONSTRAINT "notes_pk" PRIMARY KEY ("id"),
-	CONSTRAINT "notes_fk0" FOREIGN KEY ("users_id") REFERENCES "users"("id"),
-	CONSTRAINT "notes_fk1" FOREIGN KEY ("pets_id") REFERENCES "pets"("id")
+	CONSTRAINT "notes_fk0" FOREIGN KEY ("users_id") REFERENCES "users"("id") ON
+DELETE CASCADE,
+	CONSTRAINT "notes_fk1" FOREIGN KEY ("pets_id") REFERENCES "pets"("id") ON
+DELETE CASCADE
 ) WITH (
   OIDS=FALSE
 );
